@@ -1,0 +1,9 @@
+#tojeid {
+    font: 28px Arial;
+    background-color: yellow;
+  }
+
+body {
+ 	background-image: url(jakub.jpg); /* przy dodawaniu linków dodajemy url(link do pliku) */
+ 	background-color: blue;
+ }
