@@ -25,7 +25,7 @@ public class CoursePanelServlet extends HttpServlet {
 	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		getServletContext().getRequestDispatcher("../index.jsp").forward(request, response);
 	}
 
 }
