@@ -1,9 +1,0 @@
-All texts names are numbers (starting from 1)
-All texts extensions are language shorts (lowercase always)
-<number>.<language short>
-examples:
-1231.pl (for Polish)
-1231.en (for English)
-1231.de (for German)
-1231.ru (for Russian)
-1231.es (for Spanish)
