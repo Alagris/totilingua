@@ -17,14 +17,14 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class TestServlet
  */
-@WebServlet("/course")
-public class CoursePanelServlet extends HttpServlet {
+@WebServlet("/dictionary")
+public class ItemsDictionary extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CoursePanelServlet() {
+    public ItemsDictionary() {
         super();
     }
     
@@ -42,8 +42,12 @@ public class CoursePanelServlet extends HttpServlet {
 			languageTag="en";
 		}
 		String indexString=request.getParameter("index");
-		int index = indexString==null?1:Integer.parseInt(indexString);
-		
+		int index;
+		try{
+			index = Integer.parseInt(indexString);
+		}catch(NumberFormatException e){
+			index = 1;
+		}
 		MySqlManager mySQl = new MySqlManager();
 		
 		String text=null;
@@ -70,7 +74,7 @@ public class CoursePanelServlet extends HttpServlet {
 		request.getSession().setAttribute("lang", languageTag);
 		request.getSession().setAttribute("index", index);
 		request.getSession().setAttribute("text", text);
-		getServletContext().getRequestDispatcher("/CoursePanel.jsp").forward(request, response);
+		getServletContext().getRequestDispatcher("/ItemsDictionary.jsp").forward(request, response);
 	
 	}
 

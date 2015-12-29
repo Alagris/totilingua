@@ -3,7 +3,7 @@
 <html lang="mul">
     <head>
         <title>
-            Totilingua
+            Totilingua dictionary
         </title>
         <link rel="stylesheet" type="text/css" href="css/main.css">
     </head>
@@ -20,11 +20,11 @@
 
         <div id="right_bar">
             <ul>
-                <li><a href="course?lang=en&index=<%=session.getAttribute("index") %>" id="english_link">English</a></li>
-                <li><a href="course?lang=de&index=<%=session.getAttribute("index") %>" id="german_link">German</a></li>
-                <li><a href="course?lang=pl&index=<%=session.getAttribute("index") %>" id="polish_link">Polish</a></li>
-                <li><a href="course?lang=ru&index=<%=session.getAttribute("index") %>" id="russian_link">Russian</a></li>
-                <li><a href="course?lang=es&index=<%=session.getAttribute("index") %>" id="spanish_link">Spanish</a></li>
+                <li><a href="dictionary?lang=en&index=<%=session.getAttribute("index") %>" id="english_link">English</a></li>
+                <li><a href="dictionary?lang=de&index=<%=session.getAttribute("index") %>" id="german_link">German</a></li>
+                <li><a href="dictionary?lang=pl&index=<%=session.getAttribute("index") %>" id="polish_link">Polish</a></li>
+                <li><a href="dictionary?lang=ru&index=<%=session.getAttribute("index") %>" id="russian_link">Russian</a></li>
+                <li><a href="dictionary?lang=es&index=<%=session.getAttribute("index") %>" id="spanish_link">Spanish</a></li>
             </ul>
         </div> 
 
