@@ -11,10 +11,7 @@
     <body>
        
         <div id="left_bar">
-            <pre>
- here will be
- some links
-            </pre>
+            <a href="/totilingua/uploaditem.html">Upload custom item</a>
         </div>  
 
 

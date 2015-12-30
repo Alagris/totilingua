@@ -18,13 +18,13 @@ import javax.servlet.http.HttpServletResponse;
  * Servlet implementation class TestServlet
  */
 @WebServlet("/dictionary")
-public class ItemsDictionary extends HttpServlet {
+public class Dictionary extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ItemsDictionary() {
+    public Dictionary() {
         super();
     }
     
@@ -50,14 +50,14 @@ public class ItemsDictionary extends HttpServlet {
 		}
 		MySqlManager mySQl = new MySqlManager();
 		
-		String text=null;
+		String text="MySQL ERROR!";
 		mySQl.connect();
 		try {
 			Connection conn = mySQl.getConnection();
 			if(conn!=null){
 				Statement s = conn.createStatement();
 				if(s!=null){
-					ResultSet set =s.executeQuery(mySQl.selectWord(index, languageTag));
+					ResultSet set =s.executeQuery(mySQl.sqlSelectWord(index, languageTag));
 					if(set.next()){//this is very important
 						text = set.getString(1);
 					}
@@ -68,13 +68,13 @@ public class ItemsDictionary extends HttpServlet {
 			e.printStackTrace();
 		}
 		if(text==null){
-			text= "MySQL ERROR!";
+			text= "Not set yet!";
 		}
 		//It doesn't work without .getSession()
 		request.getSession().setAttribute("lang", languageTag);
 		request.getSession().setAttribute("index", index);
 		request.getSession().setAttribute("text", text);
-		getServletContext().getRequestDispatcher("/ItemsDictionary.jsp").forward(request, response);
+		getServletContext().getRequestDispatcher("/dictionary.jsp").forward(request, response);
 	
 	}
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="mul">
+<head>
+	<meta charset="UTF-8">
+	<title>Totilingua upload</title>
+	<script type="text/javascript">
+	function validate(){
+		
+		if( checkIfNotNull("access code") && checkIfNotNull("english name") && checkIfNotNull("polish name")){
+			return isFileGood("file");
+		}
+		return false;
+	}
+	function isFileGood(formInput){
+		var x = document.forms["form"][formInput];
+		if(!x.files[0].name.toUpperCase() === "PNG"){
+			alert("Image must be PNG!");
+			return false;
+		}else{
+			return true;
+		}
+		return false;
+	}
+
+	function checkIfNotNull(formInput){
+		var x = document.forms["form"][formInput].value;
+		if(x == null || x== ""){
+			alert(formInput+" is empty!");
+			return false;
+		}
+		return true;
+	}
+	</script>
+</head>
+<body>
+	<form name="form" action="new_item_upload_servlet" method="post" enctype="multipart/form-data" onsubmit="return validate()">
+		Texture of new file:
+		<input type="file" name="file" size="50" accept="image/png" /> 
+		<br /> 
+		English name:
+		<input type="text" name="english name"  /> 
+		<br /> 
+		Polish name:
+		<input type="text" name="polish name"  /> 
+		<br /> 
+		Access code:
+		<input type="password" name="access code" /> 
+		<br />
+		<input type="submit" value="Upload item" />
+	</form>
+	<br />
+	<a href="/totilingua/dictionary">Back to dictionary</a>
+</body>
+</html>
