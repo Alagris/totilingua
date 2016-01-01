@@ -35,7 +35,7 @@
             </audio>
         </div>
         <!-- src="" is case sensitive and you must remember about slashes -->
-        <img id="image" src="images/<%=session.getAttribute("index") %>.JPG" alt="Error! Image not found!">
+        <img id="image" src="<%=session.getAttribute("img_path") %>" alt="Error! Image not found!">
         
     </body>
 </html>

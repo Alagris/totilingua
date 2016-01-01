@@ -1,13 +1,11 @@
 package main.webapp;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,9 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tomcat.util.http.fileupload.FileItem;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
 
 /**
@@ -47,179 +42,85 @@ public final class NewItemUploadServlet extends HttpServlet
 		response.getWriter().append("Use POST! ");
 	}
 
-	private boolean verifyAccess(String code)
-	{
-		return code != null && code.equals("Q#2^mwD`\\sV9-Q<K^}Zt'Mu'mM_-gM");// Q#2^mwD`\sV9-Q<K^}Zt'Mu'mM_-gM
-	}
-
-	private boolean verifyIP(String remoteAddr)
-	{
-		switch (remoteAddr)
-		{
-			case "77.242.234.122":
-			case "127.0.0.1":
-				// case "": //other IPs..
-				return true;
-
-		}
-		return false;
-	}
-
-	private void error(ServletContext context, HttpServletRequest request, HttpServletResponse response, String errorMessage) throws ServletException, IOException
-	{
-		Utils.forwardToErrorSite(context, request, response, errorMessage, "/totilingua/uploaditem.html");
-
-	}
-
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-		log("POST");
-		if (!verifyIP(request.getRemoteAddr()))
-		{
-			error(getServletContext(), request, response, "Untrusted IP adress!" + request.getRemoteAddr());
-			return;
-		}
-		log("IP good!");
-		if (!ServletFileUpload.isMultipartContent(request))
-		{
-			error(getServletContext(), request, response, "Content is not multipart!");
-			return;
-		}
-		log("is multipart");
-
-		DiskFileItemFactory factory = new DiskFileItemFactory(maxItemImageSize, new File(getServletContext().getRealPath("/tmp")));
-		ServletFileUpload upload = new ServletFileUpload(factory);
-		upload.setSizeMax(maxItemImageSize);
+		ServerFileManager sfm = new ServerFileManager(getServletContext(), request, response, "/totilingua/uploaditem.html");
 		try
 		{
-			List<FileItem> fileItems = upload.parseRequest(new ServletRequestContext(request));
-			if (fileItems.size() == 4)
+			//
+			// Checking access
+			//
+			sfm.verifyIP("Untrusted IP adress!");
+			//
+			// Parsing upload request
+			//
+			sfm.verifyIfMultipart("Content is not multipart!");
+			List<FileItem> items = sfm.prepareUpload(maxItemImageSize).parseRequest(new ServletRequestContext(request));
+			sfm.verifyNumberOfSentFileItems(items, 4, "Invalid count of parameters!");
+			if (!AccessVerifier.checkCode(sfm.findValue(items, "access code", "No access code !")))
 			{
-				FileItem itemImage = null;
-				String engName = "", polName = "";
-				boolean hasAccess = false;
-
-				for (FileItem i : fileItems)
-				{
-					if (i.isFormField())
-					{
-						switch (i.getFieldName())
-						{
-							case "english name":
-								engName = i.getString();
-								break;
-							case "polish name":
-								polName = i.getString();
-								break;
-							case "access code":
-								if (verifyAccess(i.getString()))
-								{
-									hasAccess = true;
-								}
-								else
-								{
-									error(getServletContext(), request, response, "Access denied! " + i.getString());
-									return;
-								}
-						}
-					}
-					else
-					{
-						if (itemImage == null)
-						{
-							itemImage = i;
-						}
-						else
-						{
-							error(getServletContext(), request, response, "You cannot upload multiple images at once! ");
-							return;
-						}
-
-					}
-				}
-				if (!hasAccess)
-				{
-					error(getServletContext(), request, response, "No access code !");
-					return;
-				}
-				if (engName == "")
-				{
-					error(getServletContext(), request, response, "English name is empty !");
-					return;
-				}
-				if (polName == "")
-				{
-					error(getServletContext(), request, response, "Polish name is empty !");
-					return;
-				}
-				if (itemImage == null)
-				{
-					error(getServletContext(), request, response, "No image uploaded !");
-					return;
-				}
-				MySqlManager mySQL = new MySqlManager();
-				mySQL.connect();
-				int rows = 0;
-				try
-				{
-					Connection conn = mySQL.getConnection();
-					if (conn == null)
-					{
-						error(getServletContext(), request, response, "SQL connection is NULL!");
-						return;
-					}
-					Statement s = conn.createStatement();
-					if (s == null)
-					{
-						error(getServletContext(), request, response, "SQL statement is NULL!");
-						return;
-					}
-					rows = s.executeUpdate(mySQL.sqlInsertRow(new String[] { engName, polName }, new LanguageTags[] { LanguageTags.ENGLISH, LanguageTags.POLISH }));
-				}
-				catch (SQLException e)
-				{
-					error(getServletContext(), request, response, e.getMessage());
-					return;
-				}
-				
-				if (rows < 1)
-				{
-					error(getServletContext(), request, response, "Unknown problem with MySQL!");
-					return;
-				}
-				
-				try
-				{
-					File destinationFile =new File(getServletContext().getRealPath("/images/" + rows+".PNG"));
-					if(destinationFile.exists()){
-						error(getServletContext(), request, response, "FATAL! Item of index "+rows+" already exists!");
-						return;
-					}
-					destinationFile.createNewFile();
-					itemImage.write(destinationFile);
-					log("FILE SAVED TO::: "+destinationFile.getAbsolutePath());
-				}
-				catch (Exception e)
-				{
-					error(getServletContext(), request, response, e.getMessage());
-				}
-				response.setContentType("text/html");
-				response.sendRedirect("/totilingua/dictionary?lang=en&index="+rows);
-			}
-			else
-			{
-				error(getServletContext(), request, response, "Invalid count of parameters!");
+				sfm.error("Access denied! ");
 				return;
 			}
+			String engName = sfm.findValue(items, "english name", "English name is empty !");
+			String polName = sfm.findValue(items, "polish name", "Polish name is empty !");
+			FileItem image = sfm.findFile(items, "file", "No image uploaded !");
+
+			//
+			//Checking if MySQL is available
+			//and querying current number of rows 
+			//
+			MySqlManager mySQL = new MySqlManager();
+			mySQL.connect();
+			int rows = 0;
+			Connection conn = mySQL.getConnection();
+			if (conn == null)
+			{
+				sfm.error("SQL connection is NULL!");
+				return;
+			}
+			Statement s = conn.createStatement();
+			if (s == null)
+			{
+				sfm.error("SQL statement is NULL!");
+				return;
+			}
+			ResultSet result = s.executeQuery(mySQL.sqlCountRows());
+			if (!result.next())
+			{
+				sfm.error("SQL query result in invalid!");
+				return;
+			}
+			rows = result.getInt(1) + 1;//+1 because we are going to add one more entry soon
+			if (rows < 1)
+			{
+				sfm.error("Unknown problem with MySQL!");
+				return;
+			}
+
+			//
+			//trying to save upload
+			//
+			sfm.writeFile(image, "/images/" + rows + ".PNG", false);
+
+			//
+			//making changes in MySQL
+			//
+			s.executeUpdate(mySQL.sqlInsertRow(new String[] { engName, polName }, new LanguageTags[] { LanguageTags.ENGLISH, LanguageTags.POLISH }));
+
+			//
+			//rending response
+			//
+			response.setContentType("text/html");
+			response.sendRedirect("/totilingua/dictionary?lang=en&index=" + rows);
 		}
-		catch (FileUploadException e)
+		catch (Exception e)
 		{
-			error(getServletContext(), request, response, e.getMessage());
-			return;
+			sfm.error(e.getMessage());
 		}
 	}
 }
