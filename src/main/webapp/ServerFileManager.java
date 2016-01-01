@@ -22,31 +22,45 @@ public class ServerFileManager
 	//////////////////////////////
 	/////// Static file accessing methods
 	//////////////////////////////
+	/** Path end with file separator */
 	public static String getDataStorageLocation(ServletContext context)
 	{
-		return getBIfAIsNull(System.getenv("OPENSHIFT_DATA_DIR"), context.getRealPath("data"));
+		return getBIfAIsNull(System.getenv("OPENSHIFT_DATA_DIR"), context.getRealPath("data" + File.separatorChar));
 	}
 
+	/** Path end with file separator */
 	public static String getTemporaryDataStorageLocation(ServletContext context)
 	{
-		return getBIfAIsNull(System.getenv("OPENSHIFT_TMP_DIR"), context.getRealPath("tmp"));
+		return getBIfAIsNull(System.getenv("OPENSHIFT_TMP_DIR"), context.getRealPath("tmp" + File.separatorChar));
 	}
 
+	/**
+	 * @param relativePath
+	 *            - should start without file separator
+	 */
 	public static String getFilePath(ServletContext context, String relativePath)
 	{
-		return getDataStorageLocation(context) + File.separatorChar + relativePath;
+		return getDataStorageLocation(context) + relativePath;
 	}
 
 	public static String getFilePath(ServletContext context, DataDirectories dir, String fileName)
 	{
-		return getDataStorageLocation(context) + File.separatorChar + dir.path + File.separatorChar + fileName;
+		return getDataStorageLocation(context) + dir.path + File.separatorChar + fileName;
 	}
 
+	/**
+	 * @param relativePath
+	 *            - should start without file separator
+	 */
 	public static String getTmpFilePath(ServletContext context, String relativePath)
 	{
 		return getTemporaryDataStorageLocation(context) + File.separatorChar + relativePath;
 	}
 
+	/**
+	 * @param relativePath
+	 *            - should start without file separator
+	 */
 	public static File getFile(ServletContext context, String relativePath)
 	{
 		return new File(getFilePath(context, relativePath));
@@ -57,6 +71,10 @@ public class ServerFileManager
 		return new File(getFilePath(context, fileName));
 	}
 
+	/**
+	 * @param relativePath
+	 *            - should start without file separator
+	 */
 	public static File getTmpFile(ServletContext context, String relativePath)
 	{
 		return new File(getTmpFilePath(context, relativePath));
