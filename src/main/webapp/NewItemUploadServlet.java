@@ -80,7 +80,7 @@ public final class NewItemUploadServlet extends HttpServlet
 			Connection conn = mySQL.getConnection();
 			if (conn == null)
 			{
-				sfm.error("SQL connection is NULL!");
+				sfm.error("SQL connection is NULL! "+mySQL.getDB_CONN());
 				return;
 			}
 			Statement s = conn.createStatement();
