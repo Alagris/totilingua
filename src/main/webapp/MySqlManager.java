@@ -18,10 +18,10 @@ public class MySqlManager {
     	return getBIfAIsNull(System.getenv("OPENSHIFT_MYSQL_DB_PASSWORD"),"hrlhCL_7Kf1h");
     }
     private String getDatabaseHost(){
-    	return getBIfAIsNull(System.getenv("OPENSHIFT_DB_HOST"),"localhost");//127.0.0.1
+    	return getBIfAIsNull(System.getenv("OPENSHIFT_MYSQL_DB_HOST"),"localhost");//127.0.0.1
     }
     private String getDatabasePort(){
-    	return getBIfAIsNull(System.getenv("OPENSHIFT_DB_PORT"),"3306");
+    	return getBIfAIsNull(System.getenv("OPENSHIFT_MYSQL_DB_PORT"),"3306");
     }
     /**It is also name of database to be used*/
     private String getAppName(){
