@@ -83,11 +83,28 @@ public class ServerFileManager
 	/////// File accessing methods
 	//////////////////////////////
 
+	/**
+	 * @param path
+	 *            - should start without file separator
+	 */
 	public File getFile(String path)
 	{
 		return getFile(context, path);
 	}
+	
+	/**
+	 * @param path
+	 *            - should start without file separator
+	 */
+	public File getFile(DataDirectories dir,String filename)
+	{
+		return getFile(context, dir,filename);
+	}
 
+	/**
+	 * @param path
+	 *            - should start without file separator
+	 */
 	public File getTmpFile(String path)
 	{
 		return getTmpFile(context, path);
@@ -181,11 +198,28 @@ public class ServerFileManager
 	////////////////////
 	///// writing methods
 	////////////////////
+
+	/**
+	 * @param path
+	 *            - should start without file separator
+	 */
+	public void writeFile(FileItem item, DataDirectories dir,String fileName, boolean doNotOverwrite) throws Exception
+	{
+		write(item, getFile(dir,fileName), doNotOverwrite);
+	}
+	/**
+	 * @param path
+	 *            - should start without file separator
+	 */
 	public void writeFile(FileItem item, String path, boolean doNotOverwrite) throws Exception
 	{
 		write(item, getFile(path), doNotOverwrite);
 	}
 
+	/**
+	 * @param path
+	 *            - should start without file separator
+	 */
 	public void writeTmpFile(FileItem item, String path, boolean doNotOverwrite) throws Exception
 	{
 		write(item, getTmpFile(path), doNotOverwrite);
@@ -203,7 +237,6 @@ public class ServerFileManager
 			parent.mkdirs();
 		}
 		destination.createNewFile();
-		context.log("FILE SAVED TO::: " + destination.getAbsolutePath());
 		item.write(destination);
 	}
 }

@@ -71,8 +71,8 @@ public final class NewItemUploadServlet extends HttpServlet
 			FileItem image = sfm.findFile(items, "file", "No image uploaded !");
 
 			//
-			//Checking if MySQL is available
-			//and querying current number of rows 
+			// Checking if MySQL is available
+			// and querying current number of rows
 			//
 			MySqlManager mySQL = new MySqlManager();
 			mySQL.connect();
@@ -95,7 +95,8 @@ public final class NewItemUploadServlet extends HttpServlet
 				sfm.error("SQL query result in invalid!");
 				return;
 			}
-			rows = result.getInt(1) + 1;//+1 because we are going to add one more entry soon
+			rows = result.getInt(1) + 1;// +1 because we are going to add one
+										// more entry soon
 			if (rows < 1)
 			{
 				sfm.error("Unknown problem with MySQL!");
@@ -103,17 +104,17 @@ public final class NewItemUploadServlet extends HttpServlet
 			}
 
 			//
-			//trying to save upload
+			// trying to save upload
 			//
-			sfm.writeFile(image, "/images/" + rows + ".PNG", false);
+			sfm.writeFile(image, DataDirectories.IMAGES, rows + ".PNG", false);
 
 			//
-			//making changes in MySQL
+			// making changes in MySQL
 			//
 			s.executeUpdate(mySQL.sqlInsertRow(new String[] { engName, polName }, new LanguageTags[] { LanguageTags.ENGLISH, LanguageTags.POLISH }));
 
 			//
-			//rending response
+			// rending response
 			//
 			response.setContentType("text/html");
 			response.sendRedirect("/totilingua/dictionary?lang=en&index=" + rows);
