@@ -45,7 +45,7 @@ public class ServerFileManager
 
 	public static String getFilePath(ServletContext context, DataDirectories dir, String fileName)
 	{
-		return getDataStorageLocation(context) +"HH"+ dir.path + File.separatorChar + fileName;
+		return getDataStorageLocation(context) + dir.path + File.separatorChar + fileName;
 	}
 
 	/**
