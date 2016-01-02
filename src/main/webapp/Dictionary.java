@@ -71,7 +71,7 @@ public class Dictionary extends HttpServlet {
 			text= "Not set yet!";
 		}
 		//It doesn't work without .getSession()
-		request.getSession().setAttribute("img_path", "file://"+ServerFileManager.getFilePath(getServletContext(), DataDirectories.IMAGES, index+".PNG"));
+		request.getSession().setAttribute("img_path", ServerFileManager.getFilePath(getServletContext(), DataDirectories.IMAGES, index+".PNG"));
 		request.getSession().setAttribute("index", index);
 		request.getSession().setAttribute("text", text);
 		getServletContext().getRequestDispatcher("/dictionary.jsp").forward(request, response);
