@@ -22,16 +22,16 @@ public class ServerFileManager
 	//////////////////////////////
 	/////// Static file accessing methods
 	//////////////////////////////
-	/** Path end with file separator */
+	/** Path ends with file separator */
 	public static String getDataStorageLocation(ServletContext context)
 	{
-		return getBIfAIsNull(System.getenv("OPENSHIFT_DATA_DIR"), context.getRealPath("data" + File.separatorChar));
+		return getBIfAIsNull(System.getenv("OPENSHIFT_DATA_DIR"), context.getRealPath("data" )+ File.separatorChar);
 	}
 
-	/** Path end with file separator */
+	/** Path ends with file separator */
 	public static String getTemporaryDataStorageLocation(ServletContext context)
 	{
-		return getBIfAIsNull(System.getenv("OPENSHIFT_TMP_DIR"), context.getRealPath("tmp" + File.separatorChar));
+		return getBIfAIsNull(System.getenv("OPENSHIFT_TMP_DIR"), context.getRealPath("tmp" )+ File.separatorChar);
 	}
 
 	/**
@@ -45,7 +45,7 @@ public class ServerFileManager
 
 	public static String getFilePath(ServletContext context, DataDirectories dir, String fileName)
 	{
-		return getDataStorageLocation(context) + dir.path + File.separatorChar + fileName;
+		return getDataStorageLocation(context) +"HH"+ dir.path + File.separatorChar + fileName;
 	}
 
 	/**
@@ -91,14 +91,14 @@ public class ServerFileManager
 	{
 		return getFile(context, path);
 	}
-	
+
 	/**
 	 * @param path
 	 *            - should start without file separator
 	 */
-	public File getFile(DataDirectories dir,String filename)
+	public File getFile(DataDirectories dir, String filename)
 	{
-		return getFile(context, dir,filename);
+		return getFile(context, dir, filename);
 	}
 
 	/**
@@ -203,10 +203,11 @@ public class ServerFileManager
 	 * @param path
 	 *            - should start without file separator
 	 */
-	public void writeFile(FileItem item, DataDirectories dir,String fileName, boolean doNotOverwrite) throws Exception
+	public void writeFile(FileItem item, DataDirectories dir, String fileName, boolean doNotOverwrite) throws Exception
 	{
-		write(item, getFile(dir,fileName), doNotOverwrite);
+		write(item, getFile(dir, fileName), doNotOverwrite);
 	}
+
 	/**
 	 * @param path
 	 *            - should start without file separator
