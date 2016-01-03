@@ -22,6 +22,7 @@ public class ServerFileManager
 	//////////////////////////////
 	/////// Static file accessing methods
 	//////////////////////////////
+	
 	/** Path ends with file separator */
 	public static String getDataStorageLocation(ServletContext context)
 	{
@@ -43,11 +44,6 @@ public class ServerFileManager
 		return getDataStorageLocation(context) + relativePath;
 	}
 
-	public static String getFilePath(ServletContext context, DataDirectories dir, String fileName)
-	{
-		return getDataStorageLocation(context) + dir.path + File.separatorChar + fileName;
-	}
-
 	/**
 	 * @param relativePath
 	 *            - should start without file separator
@@ -66,10 +62,6 @@ public class ServerFileManager
 		return new File(getFilePath(context, relativePath));
 	}
 
-	public static File getFile(ServletContext context, DataDirectories dir, String fileName)
-	{
-		return new File(getFilePath(context, fileName));
-	}
 
 	/**
 	 * @param relativePath
@@ -92,14 +84,6 @@ public class ServerFileManager
 		return getFile(context, path);
 	}
 
-	/**
-	 * @param path
-	 *            - should start without file separator
-	 */
-	public File getFile(DataDirectories dir, String filename)
-	{
-		return getFile(context, dir, filename);
-	}
 
 	/**
 	 * @param path
@@ -199,14 +183,6 @@ public class ServerFileManager
 	///// writing methods
 	////////////////////
 
-	/**
-	 * @param path
-	 *            - should start without file separator
-	 */
-	public void writeFile(FileItem item, DataDirectories dir, String fileName, boolean doNotOverwrite) throws Exception
-	{
-		write(item, getFile(dir, fileName), doNotOverwrite);
-	}
 
 	/**
 	 * @param path

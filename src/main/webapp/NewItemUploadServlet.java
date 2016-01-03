@@ -106,7 +106,7 @@ public final class NewItemUploadServlet extends HttpServlet
 			//
 			// trying to save upload
 			//
-			sfm.writeFile(image, DataDirectories.IMAGES, rows + ".PNG", false);
+			sfm.writeFile(image, DataDirectories.getPathTo(DataDirectories.IMAGES, rows + ".PNG"), false);
 
 			//
 			// making changes in MySQL

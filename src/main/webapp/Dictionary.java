@@ -18,18 +18,18 @@ import javax.servlet.http.HttpServletResponse;
  * Servlet implementation class TestServlet
  */
 @WebServlet("/dictionary")
-public class Dictionary extends HttpServlet {
+public class Dictionary extends HttpServlet
+{
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public Dictionary() {
-        super();
-    }
-    
-    
-    
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public Dictionary()
+	{
+		super();
+	}
+
 	/**
 	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -71,7 +71,7 @@ public class Dictionary extends HttpServlet {
 			text= "Not set yet!";
 		}
 		//It doesn't work without .getSession()
-		request.getSession().setAttribute("img_path", ServerFileManager.getFilePath(getServletContext(), DataDirectories.IMAGES, index+".PNG"));
+		request.getSession().setAttribute("img_path", DownloadFromDataDir.getURLtoDataThroughThisServlet(DataDirectories.getPathTo(DataDirectories.IMAGES, index+".PNG")));
 		request.getSession().setAttribute("index", index);
 		request.getSession().setAttribute("text", text);
 		getServletContext().getRequestDispatcher("/dictionary.jsp").forward(request, response);
