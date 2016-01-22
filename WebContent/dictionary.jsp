@@ -12,6 +12,8 @@
        
         <div id="left_bar">
             <a href="/totilingua/uploaditem.html">Upload custom item</a>
+            <a href="/totilingua/edititem"></a>
+            
         </div>  
 
 

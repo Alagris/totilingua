@@ -7,172 +7,251 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import static main.webapp.Utils.*;
 
-public class MySqlManager {
+public class MySqlManager
+{
 	//////////
-	///private
+	/// private
 	//////////
-	private String getDatabaseUsername(){
-    	return getBIfAIsNull(System.getenv("OPENSHIFT_MYSQL_DB_USERNAME"),"admin9JeMdDK");
-    }
-    private String getDatabasePassword(){
-    	return getBIfAIsNull(System.getenv("OPENSHIFT_MYSQL_DB_PASSWORD"),"hrlhCL_7Kf1h");
-    }
-    private String getDatabaseHost(){
-    	return getBIfAIsNull(System.getenv("OPENSHIFT_MYSQL_DB_HOST"),"localhost");//127.0.0.1
-    }
-    private String getDatabasePort(){
-    	return getBIfAIsNull(System.getenv("OPENSHIFT_MYSQL_DB_PORT"),"3306");
-    }
-    /**It is also name of database to be used*/
-    private String getAppName(){
-    	return getBIfAIsNull(System.getenv("OPENSHIFT_APP_NAME"),"totilingua");
-    }
-    private String combineIntoURL(String DB_HOST,String DB_PORT,String APP_NAME){
-    	return "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + APP_NAME;
-    }
+	private String getDatabaseUsername()
+	{
+		return getBIfAIsNull(System.getenv("OPENSHIFT_MYSQL_DB_USERNAME"), "admin9JeMdDK");
+	}
+
+	private String getDatabasePassword()
+	{
+		return getBIfAIsNull(System.getenv("OPENSHIFT_MYSQL_DB_PASSWORD"), "hrlhCL_7Kf1h");
+	}
+
+	private String getDatabaseHost()
+	{
+		return getBIfAIsNull(System.getenv("OPENSHIFT_MYSQL_DB_HOST"), "localhost");// 127.0.0.1
+	}
+
+	private String getDatabasePort()
+	{
+		return getBIfAIsNull(System.getenv("OPENSHIFT_MYSQL_DB_PORT"), "3306");
+	}
+
+	/** It is also name of database to be used */
+	private String getAppName()
+	{
+		return getBIfAIsNull(System.getenv("OPENSHIFT_APP_NAME"), "totilingua");
+	}
+
+	private String combineIntoURL(String DB_HOST, String DB_PORT, String APP_NAME)
+	{
+		return "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + APP_NAME;
+	}
+
 	////////////////////
-	///variables//////////
+	/// variables//////////
 	////////////////////
-    private String USERNAME,PASSWORD,DB_HOST,DB_PORT ,APP_NAME ,DB_CONN,databaseTable;
-    private Connection connection;
-    
+	private String USERNAME, PASSWORD, DB_HOST, DB_PORT, APP_NAME, DB_CONN, databaseTable;
+	private Connection connection;
+
 	////////////////////
-	///get&set//////////
+	/// get&set//////////
 	////////////////////
-    public String getUSERNAME() {
+	public String getUSERNAME()
+	{
 		return USERNAME;
 	}
-	public void setUSERNAME(String uSERNAME) {
+
+	public void setUSERNAME(String uSERNAME)
+	{
 		USERNAME = uSERNAME;
 	}
+
 	public String getDatabaseTable()
 	{
 		return databaseTable;
 	}
+
 	public void setDatabaseTable(String databaseTable)
 	{
 		this.databaseTable = databaseTable;
 	}
-	public String getPASSWORD() {
+
+	public String getPASSWORD()
+	{
 		return PASSWORD;
 	}
-	public void setPASSWORD(String pASSWORD) {
+
+	public void setPASSWORD(String pASSWORD)
+	{
 		PASSWORD = pASSWORD;
 	}
-	public String getDB_HOST() {
+
+	public String getDB_HOST()
+	{
 		return DB_HOST;
 	}
-	public void setDB_HOST(String dB_HOST) {
+
+	public void setDB_HOST(String dB_HOST)
+	{
 		DB_HOST = dB_HOST;
 	}
-	public String getDB_PORT() {
+
+	public String getDB_PORT()
+	{
 		return DB_PORT;
 	}
-	public void setDB_PORT(String dB_PORT) {
+
+	public void setDB_PORT(String dB_PORT)
+	{
 		DB_PORT = dB_PORT;
 	}
-	/**It is also name of database to be used*/
-	public String getAPP_NAME() {
+
+	/** It is also name of database to be used */
+	public String getAPP_NAME()
+	{
 		return APP_NAME;
 	}
-	/**It is also name of database to be used*/
-	public void setAPP_NAME(String aPP_NAME) {
+
+	/** It is also name of database to be used */
+	public void setAPP_NAME(String aPP_NAME)
+	{
 		APP_NAME = aPP_NAME;
 	}
-	public String getDB_CONN() {
+
+	public String getDB_CONN()
+	{
 		return DB_CONN;
 	}
-	public void setDB_CONN(String dB_CONN) {
+
+	public void setDB_CONN(String dB_CONN)
+	{
 		DB_CONN = dB_CONN;
 	}
-	public Connection getConnection() {
+
+	public Connection getConnection()
+	{
 		return connection;
 	}
-	public void setConnection(Connection connection) {
+
+	public void setConnection(Connection connection)
+	{
 		this.connection = connection;
 	}
-	
-	
+
 	////////////////////
-	///public///////////
+	/// public///////////
 	////////////////////
-	public Connection connect(){
+	public Connection connect()
+	{
 		return connect("Languages");
 	}
-	public Connection connect(String defaultDatabase){
-    	USERNAME = getDatabaseUsername();
+
+	public Connection connect(String defaultDatabase)
+	{
+		USERNAME = getDatabaseUsername();
 		PASSWORD = getDatabasePassword();
 		DB_HOST = getDatabaseHost();
 		DB_PORT = getDatabasePort();
 		APP_NAME = getAppName();
-		DB_CONN = combineIntoURL(DB_HOST,DB_PORT,APP_NAME);
-		databaseTable=defaultDatabase;
-		try {
+		DB_CONN = combineIntoURL(DB_HOST, DB_PORT, APP_NAME);
+		databaseTable = defaultDatabase;
+		try
+		{
 			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection(DB_CONN , USERNAME , PASSWORD);
+			connection = DriverManager.getConnection(DB_CONN, USERNAME, PASSWORD);
 			return connection;
 		}
-		catch (SQLException e) {
+		catch (SQLException e)
+		{
 			e.printStackTrace();
 		}
-		catch (ClassNotFoundException e) {
+		catch (ClassNotFoundException e)
+		{
 			e.printStackTrace();
 		}
 		return null;
-    }
-    public void printState(OutputStream stream) throws IOException{
-    	stream.write(toString().getBytes());
-    }
-    public String toString(){
-    	return "USERNAME="+USERNAME+
-	    		"\nPASSWORD="+PASSWORD+
-	    		"\nDB_HOST ="+DB_HOST+
-	    		"\nDB_PORT ="+DB_PORT+
-	    		"\nAPP_NAME="+APP_NAME+
-	    		"\nDB_CONN ="+DB_CONN ;
-    }
-    
+	}
+
+	public void printState(OutputStream stream) throws IOException
+	{
+		stream.write(toString().getBytes());
+	}
+
+	public String toString()
+	{
+		return "USERNAME=" + USERNAME + "\nPASSWORD=" + PASSWORD + "\nDB_HOST =" + DB_HOST + "\nDB_PORT =" + DB_PORT + "\nAPP_NAME=" + APP_NAME + "\nDB_CONN =" + DB_CONN;
+	}
+
 	////////////////////
-	///SQL commands/////
+	/// SQL commands/////
 	////////////////////
-    
-    
-	/**Index starts with 1*/
-    public String sqlSelectWord(int index, LanguageTags languageTag){
-    	return "SELECT `"+languageTag.tag+"` FROM `"+databaseTable+"` WHERE `index`="+index;
-    }
-    /**Index starts with 1*/
-    public String sqlSelectWord(int index, String languageTag){
-    	return "SELECT `"+languageTag+"` FROM `"+databaseTable+"` WHERE `index`="+index;
-    }
-    
-    public String sqlInsertRow(String[] values,LanguageTags[] languageTags){
-    	if(values.length!=languageTags.length || values.length==0)return null;
-    	String command = "INSERT INTO `"+databaseTable+"` (`index`,`"+languageTags[0].tag+"`";
-    	for(int i = 1;i<languageTags.length;i++){
-    		command+=",`"+languageTags[i].tag+"`";
-    	}
-    	command+=") VALUES (NULL,";
-    	for(int i = 0;i<values.length-1;i++){
-    		command+="'"+values[i]+"',";
-    	}
-    	return command+"'"+values[values.length-1]+"')";
-    }
-    
-    public String sqlInsertRow(String[] values,String[] columns){
-    	if(values.length!=columns.length || values.length==0)return null;
-    	String command = "INSERT INTO `"+databaseTable+"` (`"+columns[0]+"`";
-    	for(int i = 1;i<columns.length;i++){
-    		command+=",`"+columns[i]+"`";
-    	}
-    	command+=") VALUES (";
-    	for(int i = 0;i<values.length-1;i++){
-    		command+="'"+values[i]+"',";
-    	}
-    	return command+"'"+values[values.length-1]+"')";
-    }
-    
-    public String sqlCountRows(){
-    	return "SELECT COUNT(*) FROM `"+databaseTable+"`";
-    }
+
+	/** Index starts with 1 */
+	public String sqlSelectWord(int index, LanguageTags languageTag)
+	{
+		return "SELECT `" + languageTag.tag + "` FROM `" + databaseTable + "` WHERE `index`=" + index;
+	}
+
+	/** Index starts with 1 */
+	public String sqlSelectWord(int index, String languageTag)
+	{
+		return "SELECT `" + languageTag + "` FROM `" + databaseTable + "` WHERE `index`=" + index;
+	}
+
+	// public String sqlInsertRow(String[] values, LanguageTags[] languageTags)
+	// {
+	// if (values.length != languageTags.length || values.length == 0)
+	// return null;
+	// String command = "INSERT INTO `" + databaseTable + "` (`index`,`" +
+	// languageTags[0].tag + "`";
+	// for (int i = 1; i < languageTags.length; i++)
+	// {
+	// command += ",`" + languageTags[i].tag + "`";
+	// }
+	// command += ") VALUES (NULL,";
+	// for (int i = 0; i < values.length - 1; i++)
+	// {
+	// command += "'" + values[i] + "',";
+	// }
+	// return command + "'" + values[values.length - 1] + "')";
+	// }
+
+	public String sqlInsertRow(String[] values, String[] columns)
+	{
+		if (values.length != columns.length || values.length == 0)
+			return null;
+		String command0 = "INSERT INTO `" + databaseTable + "` (";
+		String command1 = ") VALUES (";
+		boolean hasAtLeastOneNonNull = false;
+		for (int i = 0; i < columns.length; i++)
+		{
+			if (columns[i]==null || values[i]==null)
+				continue;
+			command0 += "`" + columns[i] + "`,";
+			command1 += "'" + values[i] + "',";
+			hasAtLeastOneNonNull = true;
+		}
+		if (!hasAtLeastOneNonNull)
+			return null;
+		return command0.substring(0, command0.length() - 1) + command1.substring(0, command1.length() - 1) + ")";
+	}
+
+	public String sqlUpdateRow(String[] values, String columns[], int index)
+	{
+		if (values.length != columns.length || values.length == 0)
+			return null;
+		String command = "UPDATE `" + databaseTable + "` SET ";
+		boolean hasAtLeastOneNonNull = false;
+		for (int i = 0; i < values.length; i++)
+		{
+			if (columns[i]==null || values[i]==null)
+				continue;
+			command += " `" + columns[i] + "` = \"" + values[i] + "\",";
+			hasAtLeastOneNonNull = true;
+		}
+		if (!hasAtLeastOneNonNull)
+			return null;
+		return command.substring(0, command.length() - 1) + " WHERE " + index;
+	}
+
+	public String sqlCountRows()
+	{
+		return "SELECT COUNT(*) FROM `" + databaseTable + "`";
+	}
 }

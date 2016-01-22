@@ -60,23 +60,40 @@ public final class NewItemUploadServlet extends HttpServlet
 			//
 			sfm.verifyIfMultipart("Content is not multipart!");
 			List<FileItem> items = sfm.prepareUpload(maxItemImageSize).parseRequest(new ServletRequestContext(request));
-			sfm.verifyNumberOfSentFileItems(items, 4, "Invalid count of parameters!");
+			sfm.verifyNumberOfSentFileItems(items, 8, "Invalid count of parameters!");
 			if (!AccessVerifier.checkCode(sfm.findValue(items, "access code", "No access code !")))
 			{
 				sfm.error("Access denied! ");
 				return;
 			}
-			String engName = sfm.findValue(items, "english name", "English name is empty !");
-			String polName = sfm.findValue(items, "polish name", "Polish name is empty !");
-			FileItem image = sfm.findFile(items, "file", "No image uploaded !");
+			//
+			// Collecting and validating data
+			//
+			int desiredIndex = Integer.parseInt(sfm.findValue(items, "index", "Index name not sent !"));
+			String[] tags = LanguageTags.getTags();
+			String[] names = sfm.findArray(items, "Some names not sent!", tags);
+			int countOfValidNames = 0;
+			if ((countOfValidNames= countValidNames(names))== 0)
+			{
+				sfm.error("At least one name must be specified!");
+				return;
+			}
 
+			FileItem image = sfm.findFile(items, "file", "No image sent !");
+			boolean isImageEmpty = image.getName() == null || image.getName().equals("");
+
+			if (desiredIndex < 1 && isImageEmpty)
+			{
+				sfm.error("Index is less than 1! You must specify valid image in this case! ");
+				return;
+			}
 			//
 			// Checking if MySQL is available
 			// and querying current number of rows
 			//
 			MySqlManager mySQL = new MySqlManager();
 			mySQL.connect();
-			int rows = 0;
+			int rows = -1;
 			Connection conn = mySQL.getConnection();
 			if (conn == null)
 			{
@@ -95,33 +112,71 @@ public final class NewItemUploadServlet extends HttpServlet
 				sfm.error("SQL query result in invalid!");
 				return;
 			}
-			rows = result.getInt(1) + 1;// +1 because we are going to add one
-										// more entry soon
-			if (rows < 1)
+			rows = result.getInt(1);
+
+			if (rows < 0)
 			{
-				sfm.error("Unknown problem with MySQL!");
+				sfm.error("Unknown problem with MySQL query result!");
 				return;
 			}
+			//
+			// validating index
+			//
+			if (desiredIndex > rows || desiredIndex < 1)
+			{
+				if (isImageEmpty)
+				{
+					sfm.error("Index is greater than biggest already existing! You must specify valid image in this case! ");
+					return;
+				}
+				desiredIndex = rows + 1;// in this case we're going to add one
+										// more item
+			} // otherwise we will modify an existing one
 
 			//
 			// trying to save upload
 			//
-			sfm.writeFile(image, DataDirectories.getPathTo(DataDirectories.IMAGES, rows + ".PNG"), false);
+			if (!isImageEmpty)
+				sfm.writeFile(image, DataDirectories.getPathTo(DataDirectories.IMAGES, desiredIndex + ".PNG"), false);
 
 			//
 			// making changes in MySQL
 			//
-			s.executeUpdate(mySQL.sqlInsertRow(new String[] { engName, polName }, new LanguageTags[] { LanguageTags.ENGLISH, LanguageTags.POLISH }));
+			String[] validTags =new String[countOfValidNames];
+			String[] validNames =new String[countOfValidNames];
+			for(int i=0,j=0;i<names.length;i++){
+				if (names[i].length() > 0){
+					validNames[j]=names[i];
+					validTags[j++]=tags[i];
+				}
+			}
+			if (desiredIndex == rows + 1)
+			{
+				s.executeUpdate(mySQL.sqlInsertRow(validNames, validTags));
+			}
+			else
+			{
+				s.executeUpdate(mySQL.sqlUpdateRow(validNames, validTags,desiredIndex));
+			}
 
 			//
-			// rending response
+			// sending response
 			//
 			response.setContentType("text/html");
-			response.sendRedirect("/totilingua/dictionary?lang=en&index=" + rows);
+			response.sendRedirect("/totilingua/dictionary?lang=en&index=" + desiredIndex);
 		}
 		catch (Exception e)
 		{
 			sfm.error(e.getMessage());
 		}
+	}
+
+	private int countValidNames(String[] names)
+	{
+		int r=0;
+		for (String n : names)
+			if (n.length() > 0)
+				r++;
+		return r;
 	}
 }

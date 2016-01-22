@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.AccessException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -145,7 +146,7 @@ public class ServerFileManager
 
 	public void verifyNumberOfSentFileItems(List<FileItem> items, int expectedCount, String errorMessage) throws Exception
 	{
-		if (items.size() != expectedCount) { throw new Exception(errorMessage); }
+		if (items.size() != expectedCount) { throw new Exception(errorMessage+"(items count="+items.size()+")"); }
 	}
 
 	public void verifyFileExists(File f, String errorMessage) throws FileNotFoundException
@@ -170,6 +171,7 @@ public class ServerFileManager
 		throw new NoSuchFieldException(errorMessage);
 	}
 
+	/**Will never return null*/
 	public String findValue(List<FileItem> items, String fieldName, String errorMessage) throws NoSuchFieldException
 	{
 		for (FileItem i : items)
@@ -179,6 +181,30 @@ public class ServerFileManager
 		throw new NoSuchFieldException(errorMessage);
 	}
 
+	/**Will never return null*/
+	public String[] findArray_ignoreEmptyFields(List<FileItem> items, String errorMessage,String... fieldNames) throws NoSuchFieldException
+	{
+		String[] values = new String[fieldNames.length];
+		int j=0, i = 0;
+		for (;i<values.length;i++)
+		{
+			values[j]=findValue(items, fieldNames[i], errorMessage);
+			if(!values[j].equals(""))j++;
+		}
+		
+		return i==j? values : Arrays.copyOfRange(values, 0, j);
+	}
+	
+	/**Will never return null*/
+	public String[] findArray(List<FileItem> items, String errorMessage,String... fieldNames) throws NoSuchFieldException
+	{
+		String[] values = new String[fieldNames.length];
+		for (int i = 0;i<values.length;i++)
+		{
+			values[i]=findValue(items, fieldNames[i], errorMessage);
+		}
+		return values;
+	}
 	////////////////////
 	///// writing methods
 	////////////////////
